@@ -17,14 +17,14 @@ def get_posts(db: Session = Depends(get_db)):
     return posts
 
 @router.post("/", status_code = status.HTTP_201_CREATED, response_model= schemas.Post)
-def create_posts(new_post: schemas.PostCreate, db: Session = Depends(get_db), user_id: int = Depends(oauth2.get_current_user)):
+def create_posts(new_post: schemas.PostCreate, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
     # post_dict = new_post.dict()
     # post_dict['id'] = randrange(0,1000000)
     # my_posts.append(post_dict)
     # cursor.execute("""INSERT INTO posts (title, content, publish) VALUES (%s, %s, %s) RETURNING * """, (new_post.title, new_post.content, new_post.publish))
     # new_post = cursor.fetchone()
     # conn.commit()
-    new_post = models.Post(**new_post.dict())
+    new_post = models.Post(user_id = current_user.id, **new_post.dict())
     db.add(new_post)
     db.commit()
     db.refresh(new_post) 
@@ -43,7 +43,7 @@ def get_post(id: int, response: Response, db: Session = Depends(get_db)):
     return post
 
 @router.put("/{id}", response_model = schemas.Post)
-def update_post(id: int, post: schemas.PostUpdate, db: Session = Depends(get_db)):
+def update_post(id: int, post: schemas.PostUpdate, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
     # cursor.execute("""UPDATE posts SET title = %s, content = %s, publish =%s WHERE id = %s RETURNING * """, (post.title, post.content, post.publish, str(id)))
     # updated_post = cursor.fetchone()
     # conn.commit()
@@ -56,7 +56,7 @@ def update_post(id: int, post: schemas.PostUpdate, db: Session = Depends(get_db)
     return updated_post.first()
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_post(id: int, db: Session = Depends(get_db)):
+def delete_post(id: int, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
     # cursor.execute("""DELETE FROM posts WHERE id = %s RETURNING * """, (str(id),))
     # deleted_post = cursor.fetchone()
     # conn.commit()
