@@ -1,6 +1,6 @@
 from .. import models, schemas, utils, oauth2
 from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
-from typing import List
+from typing import Optional, List
 from sqlalchemy.orm import Session
 from ..database import get_db
 
@@ -11,8 +11,10 @@ router = APIRouter(
 
 
 @router.get("/", response_model=List[schemas.Post])
-def get_posts(db: Session = Depends(get_db)):
-    posts = db.query(models.Post).all()
+def get_posts(db: Session = Depends(get_db), limit: int = 10, skip: int = 0, search: Optional[str] = ""):
+
+    posts = db.query(models.Post).filter(
+        models.Post.title.contains(search)).limit(limit).offset(skip).all()
     # cursor.execute("SELECT * FROM posts")
     # posts = cursor.fetchall()
     return posts
@@ -62,7 +64,7 @@ def update_post(id: int, post: schemas.PostUpdate, db: Session = Depends(get_db)
                             detail=f"not authorize to perform requested action")
     post_query.update(post.dict(), synchronize_session=False)
     db.commit()
-    return updated_post.first()
+    return updated_post
 
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
