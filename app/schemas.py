@@ -3,10 +3,12 @@ from pydantic import BaseModel, EmailStr
 from datetime import datetime
 from typing import Optional
 
+
 class PostBase(BaseModel):
     title: str
     content: str
     publish: bool = True
+
 
 class Post(PostBase):
     id: int
@@ -16,15 +18,19 @@ class Post(PostBase):
     class Config:
         orm_mode = True
 
+
 class PostCreate(PostBase):
     pass
+
 
 class PostUpdate(PostBase):
     pass
 
+
 class UserCreate(BaseModel):
     email: EmailStr
     password: str
+
 
 class UserOut(BaseModel):
     id: int
@@ -34,13 +40,16 @@ class UserOut(BaseModel):
     class Config:
         orm_mode = True
 
+
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
 
+
 class Token(BaseModel):
     access_token: str
     token_type: str
+
 
 class TokenData(BaseModel):
     id: Optional[str] = None

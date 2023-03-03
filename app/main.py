@@ -16,7 +16,7 @@ from . import utils
 from .database import engine, get_db
 from .routers import posts, users, auth
 
-#TESTING
+# TESTING
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -25,7 +25,8 @@ app = FastAPI()
 while True:
 
     try:
-        conn = psycopg2.connect("host=localhost dbname=fastapi user=emumba password=emumba", cursor_factory=RealDictCursor)
+        conn = psycopg2.connect(
+            "host=localhost dbname=fastapi user=emumba password=emumba", cursor_factory=RealDictCursor)
         cursor = conn.cursor()
         print("Database connection succesful")
         break
@@ -34,22 +35,27 @@ while True:
         print("Error:", error)
         time.sleep(5)
 
-my_posts = [{"title": "a", "content": "b", "id": 1},{"title": "c", "content": "d", "id": 2}]
+my_posts = [{"title": "a", "content": "b", "id": 1},
+            {"title": "c", "content": "d", "id": 2}]
+
 
 def find_post_index(id):
     for i, p in enumerate(my_posts):
         if p['id'] == id:
             return i
 
+
 def find_post(id):
     for p in my_posts:
         if p["id"] == id:
             return p
-        
+
+
 app.include_router(posts.router)
 app.include_router(users.router)
 app.include_router(auth.router)
 
+
 @app.get("/")
 async def root():
-    return{"message": "Hello World!"}
+    return {"message": "Hello World!"}
