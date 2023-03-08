@@ -4,6 +4,25 @@ from datetime import datetime
 from typing import Optional
 
 
+class UserCreate(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class UserOut(BaseModel):
+    id: int
+    email: EmailStr
+    created_at: datetime
+
+    class Config:
+        orm_mode = True
+
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+
 class PostBase(BaseModel):
     title: str
     content: str
@@ -27,23 +46,12 @@ class PostUpdate(PostBase):
     pass
 
 
-class UserCreate(BaseModel):
-    email: EmailStr
-    password: str
-
-
-class UserOut(BaseModel):
-    id: int
-    email: EmailStr
-    created_at: datetime
+class PostOut(BaseModel):
+    Post: Post
+    likes: int
 
     class Config:
         orm_mode = True
-
-
-class UserLogin(BaseModel):
-    email: EmailStr
-    password: str
 
 
 class Token(BaseModel):

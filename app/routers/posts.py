@@ -1,6 +1,7 @@
 from .. import models, schemas, utils, oauth2
 from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
 from typing import Optional, List
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from ..database import get_db
 
@@ -10,10 +11,13 @@ router = APIRouter(
 )
 
 
-@router.get("/", response_model=List[schemas.Post])
+@router.get("/", response_model=List[schemas.PostOut])
 def get_posts(db: Session = Depends(get_db), limit: int = 10, skip: int = 0, search: Optional[str] = ""):
 
-    posts = db.query(models.Post).filter(
+    # posts = db.query(models.Post).filter(
+    #     models.Post.title.contains(search)).limit(limit).offset(skip).all()
+    posts = db.query(models.Post, func.count(models.Likes.post_id).label("likes")).join(
+        models.Likes, models.Likes.post_id == models.Post.id, isouter=True).group_by(models.Post.id).filter(
         models.Post.title.contains(search)).limit(limit).offset(skip).all()
     # cursor.execute("SELECT * FROM posts")
     # posts = cursor.fetchall()
@@ -35,11 +39,13 @@ def create_posts(new_post: schemas.PostCreate, db: Session = Depends(get_db), cu
     return new_post
 
 
-@router.get("/{id}", response_model=schemas.Post)
+@router.get("/{id}", response_model=schemas.PostOut)
 def get_post(id: int, response: Response, db: Session = Depends(get_db)):
     # cursor.execute("""SELECT * FROM posts WHERE id = %s """, (str(id),))
     # post = cursor.fetchone()
-    post = db.query(models.Post).filter(models.Post.id == id).first()
+    # post = db.query(models.Post).filter(models.Post.id == id).first()
+    post = db.query(models.Post, func.count(models.Likes.post_id).label("likes")).join(
+        models.Likes, models.Likes.post_id == models.Post.id, isouter=True).group_by(models.Post.id).filter(models.Post.id == id).first()
 
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
