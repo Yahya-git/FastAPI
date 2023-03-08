@@ -1,0 +1,13 @@
+name: Build and Deploy Code
+
+on:
+  push:
+    branches:
+      - "dev"
+
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: pulling git repository
+        uses: actions/checkout@v3
