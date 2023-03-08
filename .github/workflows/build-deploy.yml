@@ -15,7 +15,7 @@ jobs:
       DB_USERNAME: ${{secrets.DB_USERNAME}}
       SECRET_KEY: ${{secrets.SECRET_KEY}}
       ALGORITHM: ${{secrets.ALGORITHM}}
-      ACCESS_TOKEN_EXPIRE_TIME: ${{secrets.ACCESS_TOKEN_EXPIRE_TIME}}
+      ACCESS_TOKEN_EXPIRE_TIME: 60 #${{secrets.ACCESS_TOKEN_EXPIRE_TIME}}
 
     services:
       postgres:
