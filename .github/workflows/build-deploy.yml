@@ -9,7 +9,7 @@ jobs:
   job1:
     env:
       DB_HOSTNAME: ${{secrets.DB_HOSTNAME}}
-      DB_PORT: ${{secrets.DB_PORT}}
+      DB_PORT: 5432 #${{secrets.DB_PORT}}
       DB_PASSWORD: password123 #${{secrets.DB_PASSWORD}}
       DB_NAME: ${{secrets.DB_NAME}}
       DB_USERNAME: ${{secrets.DB_USERNAME}}
