@@ -25,6 +25,6 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    op.drop_column('posts', 'published')
+    op.drop_column('posts', 'publish')
     op.drop_column('posts', 'created_at')
     pass
