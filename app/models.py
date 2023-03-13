@@ -16,6 +16,8 @@ class Post(Base):
         "users.id", ondelete="CASCADE"), nullable=False)
 
     user = relationship("User")
+    likes = relationship("Likes")
+    comments = relationship("Comments")
 
 
 class User(Base):
@@ -26,6 +28,10 @@ class User(Base):
     password = Column(String, nullable=False)
     created_at = Column(TIMESTAMP(timezone=True),
                         nullable=False, server_default=text('NOW()'))
+    
+    # post = relationship("Post")
+    # likes = relationship("Likes")
+    # comments = relationship("Comments")
 
 
 class Likes(Base):
@@ -35,3 +41,19 @@ class Likes(Base):
         "users.id", ondelete="CASCADE"), primary_key=True)
     post_id = Column(Integer, ForeignKey(
         "posts.id", ondelete="CASCADE"), primary_key=True)
+    
+    # user = relationship("User")
+    # post = relationship("Post")
+
+
+class Comments(Base):
+    __tablename__ = "comments"
+    id = Column(Integer, primary_key=True, nullable=False)
+    post_id = Column(Integer, ForeignKey("posts.id", ondelete="CASCADE"))
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
+    comment = Column(String, nullable=False)
+    posted_at = Column(TIMESTAMP(timezone=True),
+                       nullable=False, server_default=text('NOW()'))
+    
+    # user = relationship("User")
+    # post = relationship("Post")
