@@ -22,7 +22,7 @@ def like(like: schemas.Like, db: Session = Depends(database.get_db), current_use
     if (like.dir == 1):
         if found_like:
             raise HTTPException(status_code=status.HTTP_409_CONFLICT,
-                                detail=f"user{current_user.id} has already liked post: {like.post_id}")
+                                detail=f"you have already liked post: {like.post_id}")
         new_like = models.Likes(post_id=like.post_id, user_id=current_user.id)
         db.add(new_like)
         db.commit()
