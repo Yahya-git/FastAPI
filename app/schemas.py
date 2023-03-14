@@ -42,7 +42,6 @@ class CommentCreate(BaseModel):
         orm_mode = True
 
 
-
 class PostBase(BaseModel):
     title: str
     content: str
