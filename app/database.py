@@ -1,13 +1,14 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import declarative_base, sessionmaker
+
 from .config import settings
+
 # import psycopg2
 # from psycopg2.extras import RealDictCursor
 # import time
 
 
-SQLALCHEMY_DATABASE_URL = f'postgresql://{settings.db_username}:{settings.db_password}@{settings.db_hostname}:{settings.db_port}/{settings.db_name}'
+SQLALCHEMY_DATABASE_URL = f"postgresql://{settings.db_username}:{settings.db_password}@{settings.db_hostname}:{settings.db_port}/{settings.db_name}"
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
@@ -22,6 +23,7 @@ def get_db():
         yield db
     finally:
         db.close()
+
 
 # while True:
 
