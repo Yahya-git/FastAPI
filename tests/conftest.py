@@ -1,18 +1,17 @@
+import pytest
 from fastapi.testclient import TestClient
-from app.database import get_db
-from app.database import Base
-from app.main import app
-from app.config import settings
-from app.oauth2 import create_access_token
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
 from app import models
-import pytest
-from alembic import command
+from app.config import settings
+from app.database import Base, get_db
+from app.main import app
+from app.oauth2 import create_access_token
 
 # SQLALCHEMY_DATABASE_URL = 'postgresql://emumba:emumba@localhost:8000/fastapi_test'
 
-SQLALCHEMY_DATABASE_URL = f'postgresql://{settings.db_username}:{settings.db_password}@{settings.db_hostname}:{settings.db_port}/{settings.db_name}_test'
+SQLALCHEMY_DATABASE_URL = f"postgresql://{settings.db_username}:{settings.db_password}@{settings.db_hostname}:{settings.db_port}/{settings.db_name}_test"
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
@@ -33,11 +32,11 @@ def session():
 @pytest.fixture
 def client(session):
     def override_get_db():
-
         try:
             yield session
         finally:
             session.close()
+
     app.dependency_overrides[get_db] = override_get_db
     yield TestClient(app)
 
@@ -48,8 +47,9 @@ def test_user(client):
     res = client.post("/users/", json=user_data)
     assert res.status_code == 201
     new_user = res.json()
-    new_user['password'] = user_data['password']
+    new_user["password"] = user_data["password"]
     return new_user
+
 
 @pytest.fixture
 def test_user2(client):
@@ -57,12 +57,13 @@ def test_user2(client):
     res = client.post("/users/", json=user_data)
     assert res.status_code == 201
     new_user = res.json()
-    new_user['password'] = user_data['password']
+    new_user["password"] = user_data["password"]
     return new_user
+
 
 @pytest.fixture
 def token(test_user):
-    return create_access_token({"user_id": test_user['id']})
+    return create_access_token({"user_id": test_user["id"]})
 
 
 @pytest.fixture
@@ -73,10 +74,12 @@ def authorized_client(client, token):
 
 @pytest.fixture
 def test_posts(test_user, test_user2, session):
-    posts_data = [{"title": "1st", "content": "1st", "user_id": test_user['id']},
-                  {"title": "2nd", "content": "2nd", "user_id": test_user['id']},
-                  {"title": "3rd", "content": "3rd", "user_id": test_user['id']},
-                  {"title": "1st", "content": "1st", "user_id": test_user2['id']}]
+    posts_data = [
+        {"title": "1st", "content": "1st", "user_id": test_user["id"]},
+        {"title": "2nd", "content": "2nd", "user_id": test_user["id"]},
+        {"title": "3rd", "content": "3rd", "user_id": test_user["id"]},
+        {"title": "1st", "content": "1st", "user_id": test_user2["id"]},
+    ]
 
     def create_post_model(post):
         return models.Post(**post)
