@@ -1,7 +1,7 @@
-from typing import Optional
-from pydantic import BaseModel, EmailStr, conint
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
+
+from pydantic import BaseModel, EmailStr, conint
 
 
 class UserCreate(BaseModel):
@@ -23,6 +23,26 @@ class UserLogin(BaseModel):
     password: str
 
 
+class Comment(BaseModel):
+    id: int
+    post_id: int
+    user_id: int
+    comment: str
+    posted_at: datetime
+
+    class Config:
+        orm_mode = True
+
+
+class CommentCreate(BaseModel):
+    post_id: int
+    comment: str
+
+    class Config:
+        orm_mode = True
+
+
+
 class PostBase(BaseModel):
     title: str
     content: str
@@ -33,6 +53,7 @@ class Post(PostBase):
     id: int
     created_at: datetime
     user_id: int
+    user: UserOut
 
     class Config:
         orm_mode = True
@@ -48,7 +69,10 @@ class PostUpdate(PostBase):
 
 class PostOut(BaseModel):
     Post: Post
-    likes: int
+    num_likes: int
+    num_comments: Optional[int] = 0
+    comments: Optional[List[str]] = "no comments"
+    comment_emails: Optional[List[str]] = "no comments"
 
     class Config:
         orm_mode = True
